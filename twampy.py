@@ -220,7 +220,9 @@ class udpSession(threading.Thread):
 
 class twampStatistics():
 
-    def __init__(self):
+    def __init__(self, src_ip, src_port, dst_ip, dst_port):
+        self.src = (src_ip, src_port)
+        self.dst = (dst_ip, dst_port)
         self.count = 0
 
     def add(self, delayRT, delayOB, delayIB, rseq, sseq):
@@ -283,6 +285,9 @@ class twampStatistics():
 
     def dump(self, total):
         print("===============================================================================")
+        print("Source: %s" % ":".join(self.src))
+        print("Destination: %s" % ":".join(self.dst))
+        print("===============================================================================")
         print("Direction         Min         Max         Avg          Jitter     Loss")
         print("-------------------------------------------------------------------------------")
         if self.count > 0:
@@ -315,7 +320,7 @@ class twampySessionSender(udpSession):
         self.remote_port = rpt
         self.interval = float(args.interval) / 1000
         self.count = args.count
-        self.stats = twampStatistics()
+        self.stats = twampStatistics(sip, spt, rip, rpt)
 
         if args.padding != -1:
             self.padmix = [args.padding]
